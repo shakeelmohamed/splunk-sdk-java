@@ -1250,7 +1250,11 @@ public class Service extends BaseService {
     public ResponseMessage restart() {
         ResponseMessage rm = post("server/control/restart");
         if (System.getenv("TRAVIS") != null) {
-            Thread.sleep(500);
+            try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
         return rm;
     }
