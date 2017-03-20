@@ -1248,7 +1248,11 @@ public class Service extends BaseService {
      * @return The restart response message.
      */
     public ResponseMessage restart() {
-        return post("server/control/restart");
+        ResponseMessage rm = post("server/control/restart");
+        if (System.getenv("TRAVIS") != null) {
+            Thread.sleep(500);
+        }
+        return rm;
     }
 
     /**
