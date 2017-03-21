@@ -16,18 +16,33 @@
 
 package com.splunk;
 
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 
 
 /**
@@ -90,6 +105,25 @@ public abstract class SDKTestCase {
         //System.setProperty("https.proxyPort", "8888");
 
         HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1);
+
+        // Create an SSLSocketFactory configured to use TLS only
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        TrustManager[] byPassTrustManagers = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                    }
+                }
+        };
+        sslContext.init(null, byPassTrustManagers, new SecureRandom());
+        SSLSocketFactory TLSOnlySSLFactory = sslContext.getSocketFactory();
+        Service.setSSLSocketFactory(TLSOnlySSLFactory);
 
         command = Command.splunk();
         connect();
