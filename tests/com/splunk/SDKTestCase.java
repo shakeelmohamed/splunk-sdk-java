@@ -104,10 +104,10 @@ public abstract class SDKTestCase {
     }
 
     private static void removeCryptographyRestrictions() {
-        if (!isRestrictedCryptography()) {
-            System.out.println("Cryptography restrictions removal not needed");
-            return;
-        }
+//        if (!isRestrictedCryptography()) {
+//            System.out.println("Cryptography restrictions removal not needed");
+//            return;
+//        }
         try {
             /*
              * Do the following, but with reflection to bypass access checks:
