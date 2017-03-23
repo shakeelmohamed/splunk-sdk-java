@@ -562,7 +562,6 @@ public class HttpService {
         private Socket configure(Socket socket) {
             if (socket instanceof SSLSocket) {
                 ((SSLSocket) socket).setEnabledProtocols(new String[]{sslSecurityProtocol.toString()});
-                ((SSLSocket) socket).setEnabledCipherSuites(delegate.getSupportedCipherSuites());
             }
             return socket;
         }
