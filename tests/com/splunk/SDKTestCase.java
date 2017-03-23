@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -124,6 +125,14 @@ public abstract class SDKTestCase {
         sslContext.init(null, byPassTrustManagers, new SecureRandom());
         SSLSocketFactory TLSOnlySSLFactory = sslContext.getSocketFactory();
         Service.setSSLSocketFactory(TLSOnlySSLFactory);
+
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            field.setAccessible(true);
+            field.set(null, java.lang.Boolean.FALSE);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
         command = Command.splunk();
         connect();
