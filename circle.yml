@@ -6,7 +6,6 @@ machine:
 
 dependencies:
     pre:
-        - export SPLUNK_VERSION=6.4-sdk
         # Create .splunkrc file with default credentials
         - echo host=localhost >> $HOME/.splunkrc
         - echo username=admin >> $HOME/.splunkrc
@@ -17,11 +16,11 @@ dependencies:
         # Set SPLUNK_HOME
         - export SPLUNK_HOME="/opt/splunk"
         # Pull docker image
-        - docker pull splunk/splunk-sdk-travis-ci:$SPLUNK_VERSION
+        - docker pull splunk/splunk-sdk-travis-ci:6.4-sdk
         # Add DOCKER to iptables, 1/10 times this is needed, force 0 exit status
         - sudo iptables -N DOCKER || true
         # Start Docker container
-        - docker run -p 127.0.0.1:8089:8089 -p 127.0.0.1:$TEST_TCP_PORT:$TEST_TCP_PORT -p 127.0.0.1:$TEST_UDP_PORT:$TEST_UDP_PORT/udp -d splunk/splunk-sdk-travis-ci:$SPLUNK_VERSION
+        - docker run -p 127.0.0.1:8089:8089 -p 127.0.0.1:10667:10667 -p 127.0.0.1:10668:10668/udp -d splunk/splunk-sdk-travis-ci:6.4-sdk
         # curl Splunk until it returns valid data indicating it has been setup, try 20 times maximum
         - for i in `seq 0 20`; do if curl --fail -k https://localhost:8089/services/server/info &> /dev/null; then break; fi; echo $i; sleep 1; done
         # Additional sleep to make sure splunkd is
